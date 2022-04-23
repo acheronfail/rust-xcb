@@ -2435,6 +2435,36 @@ impl CodeGen {
             match f {
                 Field::Field { name, .. } => {
                     writeln!(out, "{}.field(\"{}\", &self.{}())", cg::ind(3), name, name)?;
+
+                    #[cfg(feature = "xlib_xcb")]
+                    if name == "error_code" {
+                        writeln!(out, "{}.field(\"{}_name\", {{", cg::ind(3), name)?;
+                        writeln!(out, "{}    let err_name = match self.{}() {{", cg::ind(3), name)?;
+                        writeln!(out, "{}        x11::xlib::Success => \"Success\",", cg::ind(3))?;
+                        writeln!(out, "{}        x11::xlib::BadRequest => \"BadRequest\",", cg::ind(3))?;
+                        writeln!(out, "{}        x11::xlib::BadValue => \"BadValue\",", cg::ind(3))?;
+                        writeln!(out, "{}        x11::xlib::BadWindow => \"BadWindow\",", cg::ind(3))?;
+                        writeln!(out, "{}        x11::xlib::BadPixmap => \"BadPixmap\",", cg::ind(3))?;
+                        writeln!(out, "{}        x11::xlib::BadAtom => \"BadAtom\",", cg::ind(3))?;
+                        writeln!(out, "{}        x11::xlib::BadCursor => \"BadCursor\",", cg::ind(3))?;
+                        writeln!(out, "{}        x11::xlib::BadFont => \"BadFont\",", cg::ind(3))?;
+                        writeln!(out, "{}        x11::xlib::BadMatch => \"BadMatch\",", cg::ind(3))?;
+                        writeln!(out, "{}        x11::xlib::BadDrawable => \"BadDrawable\",", cg::ind(3))?;
+                        writeln!(out, "{}        x11::xlib::BadAccess => \"BadAccess\",", cg::ind(3))?;
+                        writeln!(out, "{}        x11::xlib::BadAlloc => \"BadAlloc\",", cg::ind(3))?;
+                        writeln!(out, "{}        x11::xlib::BadColor => \"BadColor\",", cg::ind(3))?;
+                        writeln!(out, "{}        x11::xlib::BadGC => \"BadGC\",", cg::ind(3))?;
+                        writeln!(out, "{}        x11::xlib::BadIDChoice => \"BadIDChoice\",", cg::ind(3))?;
+                        writeln!(out, "{}        x11::xlib::BadName => \"BadName\",", cg::ind(3))?;
+                        writeln!(out, "{}        x11::xlib::BadLength => \"BadLength\",", cg::ind(3))?;
+                        writeln!(out, "{}        x11::xlib::BadImplementation => \"BadImplementation\",", cg::ind(3))?;
+                        writeln!(out, "{}        x11::xlib::FirstExtensionError => \"FirstExtensionError\",", cg::ind(3))?;
+                        writeln!(out, "{}        x11::xlib::LastExtensionError => \"LastExtensionError\",", cg::ind(3))?;
+                        writeln!(out, "{}        _ => \"Unknown\"", cg::ind(3))?;
+                        writeln!(out, "{}    }};", cg::ind(3))?;
+                        writeln!(out, "{}    &format!(\"{{}}\", err_name)", cg::ind(3))?;
+                        writeln!(out, "{}}})", cg::ind(3))?;
+                    }
                 }
                 Field::List {
                     name,

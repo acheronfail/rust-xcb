@@ -73,6 +73,10 @@ features = ["xlib", "glx"]
 name = "basic_window"
 
 [[example]]
+name = "error_code_debug"
+required-features = ["xlib_xcb"]
+
+[[example]]
 name = "connect_str"
 
 [[example]]
